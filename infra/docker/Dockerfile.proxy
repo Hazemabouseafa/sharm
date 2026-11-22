@@ -1,0 +1,9 @@
+# syntax=docker/dockerfile:1
+FROM caddy:2.8-alpine
+
+COPY infra/docker/Caddyfile.coolify /etc/caddy/Caddyfile
+
+EXPOSE 80
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -q --spider http://127.0.0.1:80/api/v1/health/live || exit 1

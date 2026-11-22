@@ -51,9 +51,23 @@ export async function createConfiguredApiApp(): Promise<NestExpressApplication> 
     next();
   });
 
-  // Strict single-origin CORS only when explicitly needed
+  // Strict origin allowlist derived from configured public/internal URLs
+  const allowedOrigins = Array.from(
+    new Set(
+      [env.PUBLIC_SITE_URL, env.WEB_INTERNAL_URL, ...(process.env.CORS_ALLOWED_ORIGINS?.split(',') ?? [])]
+        .map((raw) => raw.trim())
+        .filter(Boolean)
+        .map((raw) => {
+          try {
+            return new URL(raw).origin;
+          } catch {
+            return raw.replace(/\/+$/, '');
+          }
+        }),
+    ),
+  );
   app.enableCors({
-    origin: [env.PUBLIC_SITE_URL, env.WEB_INTERNAL_URL],
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'x-csrf-token', 'idempotency-key', 'x-correlation-id'],

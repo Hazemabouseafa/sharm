@@ -79,12 +79,15 @@ export function TourDetailBookingPanel({
   demoMode: boolean;
 }) {
   const router = useRouter();
+  const defaultAdults = Math.max(tour.minAdults, 2);
   const firstBookable =
+    departures.find((d) => d.bookable && (!initialDate || d.departureDate === initialDate) && d.remainingSeats >= defaultAdults) ??
     departures.find((d) => d.bookable && (!initialDate || d.departureDate === initialDate)) ??
+    departures.find((d) => d.bookable && d.remainingSeats >= defaultAdults) ??
     departures.find((d) => d.bookable);
 
   const [departureId, setDepartureId] = useState(firstBookable?.id || '');
-  const [adults, setAdults] = useState(Math.max(tour.minAdults, 2));
+  const [adults, setAdults] = useState(defaultAdults);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [selectedAddons, setSelectedAddons] = useState<Record<string, number>>({});

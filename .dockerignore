@@ -9,8 +9,13 @@ dist
 .local-pg.log
 .local-storage
 .local-backups
+.local-mailpit
+.local-restore-verify
+.local-admin-bootstrap.json
 playwright-report
 test-results
 Sharm_Pharaoh_Handoff
 docs/qa
 *.log
+.impeccable
+.agent

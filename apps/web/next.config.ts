@@ -21,8 +21,6 @@ if (fs.existsSync(rootEnvPath)) {
   }
 }
 
-const API_INTERNAL_URL = process.env.API_INTERNAL_URL || 'http://127.0.0.1:4000';
-
 const nextConfig: NextConfig = {
   transpilePackages: ['@sharm/contracts', '@sharm/ui'],
   poweredByHeader: false,
@@ -30,10 +28,11 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   async rewrites() {
+    const apiInternalUrl = (process.env.API_INTERNAL_URL || 'http://127.0.0.1:4000').replace(/\/+$/, '');
     return [
       {
         source: '/api/v1/:path*',
-        destination: `${API_INTERNAL_URL}/api/v1/:path*`,
+        destination: `${apiInternalUrl}/api/v1/:path*`,
       },
     ];
   },

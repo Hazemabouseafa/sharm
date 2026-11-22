@@ -25,6 +25,8 @@ import {
   TourPickupOption,
 } from '@/components/public/TourDetailBookingPanel';
 
+export const dynamic = 'force-dynamic';
+
 interface TourDetailPayload {
   tour: {
     id: string;

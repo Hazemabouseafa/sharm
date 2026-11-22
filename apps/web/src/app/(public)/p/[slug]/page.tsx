@@ -4,6 +4,8 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { SharedBlockRenderer } from '@/components/cms/SharedBlockRenderer';
 import { loadPublicCatalogContext, loadPublicGlobal, loadPublishedPage } from '@/lib/public-data';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   try {

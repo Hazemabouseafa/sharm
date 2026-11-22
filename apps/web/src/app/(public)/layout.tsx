@@ -4,6 +4,8 @@ import { SiteFooter } from '@/components/public/SiteFooter';
 import { PublicLanguageProvider } from '@/components/public/PublicLanguageContext';
 import { loadPublicGlobal } from '@/lib/public-data';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const { global, site } = await loadPublicGlobal();
 

@@ -72,6 +72,176 @@
           "column": 6,
           "specs": [
             {
+              "title": "WEB-01..08: all 8 required public pages render in English LTR with zero broken images or runtime errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11172,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-22T16:15:34.607Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "310f5d38cd89ad55ea3f-6b60704233325e832bb8",
+              "file": "platform.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "CAT-01 & CAT-02: tours catalog filtering, destination query, and no-results recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3497,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-22T16:15:46.106Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "310f5d38cd89ad55ea3f-c59ea2b3f3babdf59b40",
+              "file": "platform.spec.ts",
+              "line": 45,
+              "column": 7
+            },
+            {
+              "title": "BOOK-E2E-01: end-to-end guest booking flow, secure manage token exchange, PDF download, and worker SMTP capture",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6476,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-22T16:15:49.667Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "310f5d38cd89ad55ea3f-5a50ca650d646e38741e",
+              "file": "platform.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "ADMIN-E2E-01 & LIVE-EDITOR-E2E-01: staff login, admin dashboard modules, and Live Editor draft isolation -> publish -> live update without rebuild -> rollback",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23134,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-22T16:15:56.206Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "310f5d38cd89ad55ea3f-d19cd95ce17f09bb7d74",
+              "file": "platform.spec.ts",
+              "line": 116,
+              "column": 7
+            },
+            {
+              "title": "RESP-01 & A11Y-01: responsive viewports (360px..1440px) have zero horizontal overflow and pass WCAG axe-core checks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10082,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-22T16:16:19.421Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "310f5d38cd89ad55ea3f-9a8d4498ed580b558cd6",
+              "file": "platform.spec.ts",
+              "line": 190,
+              "column": 7
+            },
+            {
               "title": "I18N-LOGO-E2E-01: new brand logo renders cleanly, public instant translation works for RU/IT/TR/PL/EN, dynamic new text translates automatically, and admin supports Arabic RTL",
               "ok": true,
               "tags": [],
@@ -87,12 +257,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 9481,
+                      "duration": 5848,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-11-22T15:16:09.604Z",
+                      "startTime": "2026-11-22T16:16:29.578Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -112,9 +282,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-11-22T15:16:04.828Z",
-    "duration": 15362.443000000003,
-    "expected": 1,
+    "startTime": "2026-11-22T16:15:31.926Z",
+    "duration": 63876.202999999994,
+    "expected": 6,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

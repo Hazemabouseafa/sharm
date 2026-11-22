@@ -3,16 +3,24 @@ import { z } from 'zod';
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
   DEMO_MODE: z.string().optional().default('false'),
-  PUBLIC_SITE_URL: z.string().url().default('http://localhost:3000'),
+  PUBLIC_SITE_URL: z
+    .string()
+    .url()
+    .default('http://localhost:3000')
+    .transform((v) => v.replace(/\/+$/, '')),
   API_PORT: z.coerce.number().int().min(1).max(65535).default(4000),
-  WEB_INTERNAL_URL: z.string().url().default('http://127.0.0.1:3000'),
+  WEB_INTERNAL_URL: z
+    .string()
+    .url()
+    .default('http://127.0.0.1:3000')
+    .transform((v) => v.replace(/\/+$/, '')),
   DATABASE_URL: z.string().min(10, 'DATABASE_URL is required'),
   SESSION_SECRET: z.string().min(32, 'SESSION_SECRET must be at least 32 characters'),
   CSRF_SECRET: z.string().min(32, 'CSRF_SECRET must be at least 32 characters'),
   PREVIEW_SIGNING_SECRET: z.string().min(32, 'PREVIEW_SIGNING_SECRET must be at least 32 characters'),
   REVALIDATION_SECRET: z.string().min(32, 'REVALIDATION_SECRET must be at least 32 characters'),
   CREDENTIALS_ENCRYPTION_KEY: z.string().min(32, 'CREDENTIALS_ENCRYPTION_KEY must be at least 32 characters'),
-  COOKIE_SECURE: z.string().optional().default('false'),
+  COOKIE_SECURE: z.string().optional().default('auto'),
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(1),
   STORAGE_PUBLIC_DIR: z.string().default('./.local-storage/public'),
   STORAGE_PRIVATE_DIR: z.string().default('./.local-storage/private'),
@@ -22,7 +30,7 @@ const EnvSchema = z.object({
   SMTP_SECURE: z.string().optional().default('false'),
   SMTP_USER: z.string().optional().default(''),
   SMTP_PASS: z.string().optional().default(''),
-  EMAIL_FROM: z.string().default('Sharm Pharaoh Travel <noreply@sharmpharaoh.example>'),
+  EMAIL_FROM: z.string().default('Sharm Pharaoh Travel <reservations@sharmpharaoh.com>'),
   PAYMOB_ENABLED: z.string().optional().default('false'),
   PAYMOB_API_BASE_URL: z.string().default('https://accept.paymob.com'),
   PAYMOB_SECRET_KEY: z.string().optional().default(''),
@@ -53,4 +61,22 @@ export function getAppEnv(): AppEnv {
 
 export function resetAppEnvCache(): void {
   cachedEnv = null;
+}
+
+/**
+ * Resolves the `Secure` attribute for HTTP cookies so HTTPS reverse proxies (like Coolify Traefik)
+ * receive Secure cookies automatically under `COOKIE_SECURE=auto`, while plain HTTP localhost or
+ * staging test URLs continue setting cookies cleanly.
+ */
+export function resolveCookieSecure(req?: {
+  secure?: boolean;
+  header?: (name: string) => string | undefined;
+}): boolean {
+  const setting = (getAppEnv().COOKIE_SECURE || 'auto').trim().toLowerCase();
+  if (setting === 'true') return true;
+  if (setting === 'false') return false;
+  const forwardedProto = req?.header?.('x-forwarded-proto')?.split(',')[0]?.trim().toLowerCase();
+  if (forwardedProto) return forwardedProto === 'https';
+  if (typeof req?.secure === 'boolean' && req.secure) return true;
+  return getAppEnv().PUBLIC_SITE_URL.toLowerCase().startsWith('https://');
 }

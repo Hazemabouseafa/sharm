@@ -5,4 +5,5 @@ export * from './outbox';
 export * from './expiry-service';
 export * from './translation';
 export * from './seed-prod-init';
+export * from './seed-storefront';
 export * from './seed-demo';

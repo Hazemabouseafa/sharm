@@ -10,7 +10,7 @@ import {
   STAFF_COOKIE_NAME,
   StaffAuthGuard,
 } from '../common/auth.guard';
-import { getAppEnv } from '../common/env';
+import { resolveCookieSecure } from '../common/env';
 import { DomainError } from '../common/http-exception.filter';
 import { PrismaService } from '../common/prisma.service';
 import { randomOpaqueToken, sha256Hex } from '../common/crypto';
@@ -35,8 +35,8 @@ export class AuthController {
     private readonly prisma: PrismaService,
   ) {}
 
-  private setSessionCookie(res: Response, token: string): void {
-    const secure = getAppEnv().COOKIE_SECURE === 'true';
+  private setSessionCookie(res: Response, token: string, req?: RequestWithStaff): void {
+    const secure = resolveCookieSecure(req);
     res.cookie(STAFF_COOKIE_NAME, token, {
       httpOnly: true,
       secure,
@@ -69,7 +69,7 @@ export class AuthController {
     if (result.requiresTwoFactor) {
       return { requiresTwoFactor: true };
     }
-    this.setSessionCookie(res, result.sessionToken!);
+    this.setSessionCookie(res, result.sessionToken!, req);
     return {
       user: result.user,
       csrfToken: result.csrfToken,
@@ -106,7 +106,12 @@ export class AuthController {
   @Post('logout')
   async logout(@Req() req: RequestWithStaff, @Res({ passthrough: true }) res: Response) {
     await this.auth.logout(req.staff!.sessionId, req.staff!.userId, req.staff!.role, req.correlationId);
-    res.clearCookie(STAFF_COOKIE_NAME, { path: '/' });
+    res.clearCookie(STAFF_COOKIE_NAME, {
+      path: '/',
+      httpOnly: true,
+      secure: resolveCookieSecure(req),
+      sameSite: 'lax',
+    });
     res.setHeader('Clear-Site-Data', '"cookies", "storage", "cache"');
     return { ok: true };
   }
@@ -130,7 +135,7 @@ export class AuthController {
       userAgent: req.header('user-agent'),
       correlationId: req.correlationId,
     });
-    this.setSessionCookie(res, newSessionToken);
+    this.setSessionCookie(res, newSessionToken, req);
     return { ok: true, csrfToken: newCsrfToken };
   }
 

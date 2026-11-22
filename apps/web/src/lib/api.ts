@@ -1,5 +1,8 @@
-export const API_INTERNAL_BASE =
-  process.env.API_INTERNAL_URL || 'http://127.0.0.1:4000';
+export function getApiInternalBase(): string {
+  return (process.env.API_INTERNAL_URL || 'http://127.0.0.1:4000').replace(/\/+$/, '');
+}
+
+export const API_INTERNAL_BASE = getApiInternalBase();
 
 export interface ServerFetchOptions {
   tags?: string[];
@@ -11,7 +14,7 @@ export async function serverApiGet<T>(
   apiPath: string,
   opts: ServerFetchOptions = {},
 ): Promise<T> {
-  const url = `${API_INTERNAL_BASE}/api/v1${apiPath}`;
+  const url = `${getApiInternalBase()}/api/v1${apiPath}`;
   const res = await fetch(url, {
     ...(opts.noStore
       ? { cache: 'no-store' as const }

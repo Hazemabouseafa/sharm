@@ -17,8 +17,8 @@ sharm-pharaoh/
 │   ├── database/             # Prisma 6 schema, SQL migrations + CHECK constraints, row-lock inventory helpers, seeds
 │   └── ui/                   # Brand tokens, BrandLogo, NativeDialog (<dialog>), MobileNavDrawer, StatusBadge
 ├── infra/
-│   ├── docker/               # Multi-stage Node 24 LTS Dockerfiles (api, web, worker) + same-origin Caddyfile
-│   └── compose/              # docker-compose.dev.yml, docker-compose.staging.yml, docker-compose.prod.yml
+│   ├── docker/               # Multi-stage Node 24 LTS Dockerfiles (api, web, worker, proxy) + Caddyfile & entrypoint
+│   └── compose/              # Standalone staging/prod Compose files (root docker-compose.yml targets Coolify)
 ├── scripts/                  # Setup, admin bootstrap, encrypted backup/restore verification, local SMTP capture
 ├── tests/                    # Vitest unit tests, PostgreSQL integration tests, Playwright E2E browser tests
 └── docs/                     # OpenAPI spec, architecture, admin/editor guides, Coolify guide, QA & feature matrix

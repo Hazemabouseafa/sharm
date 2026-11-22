@@ -24,7 +24,7 @@ import { formatMinorUnitsExact } from '@sharm/contracts';
 const WORKER_ID = `worker-${os.hostname()}-${process.pid}`;
 const CONCURRENCY = Math.max(1, Math.min(4, Number(process.env.WORKER_CONCURRENCY || 2)));
 const POLL_MS = Math.max(500, Number(process.env.WORKER_POLL_INTERVAL_MS || 2000));
-const WEB_INTERNAL_URL = process.env.WEB_INTERNAL_URL || 'http://127.0.0.1:3000';
+const WEB_INTERNAL_URL = (process.env.WEB_INTERNAL_URL || 'http://127.0.0.1:3000').replace(/\/+$/, '');
 const REVALIDATION_SECRET = process.env.REVALIDATION_SECRET || '';
 
 const prisma = new PrismaClient();
@@ -180,7 +180,7 @@ export async function processSingleJob(client: PrismaClient, job: OutboxJob): Pr
     try {
       const mailer = createMailer();
       const info = await mailer.sendMail({
-        from: process.env.EMAIL_FROM || 'Sharm Pharaoh Travel <noreply@sharmpharaoh.example>',
+        from: process.env.EMAIL_FROM || 'Sharm Pharaoh Travel <reservations@sharmpharaoh.com>',
         to: toEmail,
         subject,
         text,

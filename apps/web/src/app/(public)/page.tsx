@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { SharedBlockRenderer } from '@/components/cms/SharedBlockRenderer';
 import { loadPublicCatalogContext, loadPublicGlobal, loadPublishedPage } from '@/lib/public-data';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const res = await loadPublishedPage('home');

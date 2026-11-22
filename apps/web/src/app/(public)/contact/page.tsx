@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { SharedBlockRenderer } from '@/components/cms/SharedBlockRenderer';
 import { loadPublicCatalogContext, loadPublicGlobal, loadPublishedPage } from '@/lib/public-data';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Contact & Plan Your Trip',
   description: 'Reach Sharm Pharaoh Travel advisors for custom Egypt itineraries, excursions, and group inquiries.',

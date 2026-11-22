@@ -1,0 +1,211 @@
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sharm}
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      POSTGRES_DB: ${POSTGRES_DB:-sharm_pharaoh_prod}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sharm_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sharm} -d ${POSTGRES_DB:-sharm_pharaoh_prod}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  migrate:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-sharm}
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      POSTGRES_DB: ${POSTGRES_DB:-sharm_pharaoh_prod}
+      BOOTSTRAP_CATALOG: ${BOOTSTRAP_CATALOG:-true}
+      SITE_CONTACT_EMAIL: ${SITE_CONTACT_EMAIL:-reservations@sharmpharaoh.com}
+      INITIAL_ADMIN_EMAIL: ${INITIAL_ADMIN_EMAIL:-owner@sharmpharaoh.com}
+      INITIAL_ADMIN_USERNAME: ${INITIAL_ADMIN_USERNAME:-owner}
+      INITIAL_ADMIN_NAME: ${INITIAL_ADMIN_NAME:-Sharm Pharaoh Owner}
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD:-}
+    command: ["sh", "-c", "pnpm db:migrate:deploy && node scripts/coolify-bootstrap.mjs"]
+    networks:
+      - sharm_internal
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      DEMO_MODE: "false"
+      API_PORT: 4000
+      DATABASE_URL: ${DATABASE_URL:-}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-sharm}
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      POSTGRES_DB: ${POSTGRES_DB:-sharm_pharaoh_prod}
+      SERVICE_URL_PROXY: ${SERVICE_URL_PROXY:-}
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-http://localhost:3000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
+      WEB_INTERNAL_URL: http://web:3000
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-2}
+      COOKIE_SECURE: ${COOKIE_SECURE:-auto}
+      SESSION_SECRET: ${SERVICE_PASSWORD_64_SESSION}
+      CSRF_SECRET: ${SERVICE_PASSWORD_64_CSRF}
+      PREVIEW_SIGNING_SECRET: ${SERVICE_PASSWORD_64_PREVIEW}
+      REVALIDATION_SECRET: ${SERVICE_PASSWORD_64_REVALIDATION}
+      CREDENTIALS_ENCRYPTION_KEY: ${SERVICE_PASSWORD_64_CREDENTIALS}
+      STORAGE_PUBLIC_DIR: /app/storage/public
+      STORAGE_PRIVATE_DIR: /app/storage/private
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Sharm Pharaoh Travel <reservations@sharmpharaoh.com>}
+      PAYMOB_ENABLED: ${PAYMOB_ENABLED:-false}
+      PAYMOB_API_BASE_URL: ${PAYMOB_API_BASE_URL:-https://accept.paymob.com}
+      PAYMOB_SECRET_KEY: ${PAYMOB_SECRET_KEY:-}
+      PAYMOB_PUBLIC_KEY: ${PAYMOB_PUBLIC_KEY:-}
+      PAYMOB_HMAC_SECRET: ${PAYMOB_HMAC_SECRET:-}
+      PAYMOB_INTEGRATION_ID: ${PAYMOB_INTEGRATION_ID:-}
+      PAYMOB_CURRENCY: ${PAYMOB_CURRENCY:-USD}
+      PAYMOB_SANDBOX_VERIFIED: ${PAYMOB_SANDBOX_VERIFIED:-false}
+      DEEPL_API_KEY: ${DEEPL_API_KEY:-}
+      GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY:-}
+      LIBRETRANSLATE_URL: ${LIBRETRANSLATE_URL:-}
+      LIBRETRANSLATE_API_KEY: ${LIBRETRANSLATE_API_KEY:-}
+      TRANSLATE_CONTACT_EMAIL: ${TRANSLATE_CONTACT_EMAIL:-}
+    volumes:
+      - public_storage:/app/storage/public
+      - private_storage:/app/storage/private
+      - backup_storage:/app/storage/backups
+    networks:
+      - sharm_internal
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:4000/api/v1/health/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-sharm}
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      POSTGRES_DB: ${POSTGRES_DB:-sharm_pharaoh_prod}
+      WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-2}
+      WORKER_POLL_INTERVAL_MS: ${WORKER_POLL_INTERVAL_MS:-2000}
+      WEB_INTERNAL_URL: http://web:3000
+      REVALIDATION_SECRET: ${SERVICE_PASSWORD_64_REVALIDATION}
+      STORAGE_PUBLIC_DIR: /app/storage/public
+      STORAGE_PRIVATE_DIR: /app/storage/private
+      BACKUP_ENCRYPTION_PASSPHRASE: ${SERVICE_PASSWORD_64_BACKUP}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Sharm Pharaoh Travel <reservations@sharmpharaoh.com>}
+      DEEPL_API_KEY: ${DEEPL_API_KEY:-}
+      GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY:-}
+      LIBRETRANSLATE_URL: ${LIBRETRANSLATE_URL:-}
+      LIBRETRANSLATE_API_KEY: ${LIBRETRANSLATE_API_KEY:-}
+      TRANSLATE_CONTACT_EMAIL: ${TRANSLATE_CONTACT_EMAIL:-}
+    volumes:
+      - public_storage:/app/storage/public
+      - private_storage:/app/storage/private
+      - backup_storage:/app/storage/backups
+    networks:
+      - sharm_internal
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.web
+      args:
+        API_INTERNAL_URL: http://api:4000
+        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-http://localhost:3000}
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      API_INTERNAL_URL: http://api:4000
+      SERVICE_URL_PROXY: ${SERVICE_URL_PROXY:-}
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-http://localhost:3000}
+      REVALIDATION_SECRET: ${SERVICE_PASSWORD_64_REVALIDATION}
+    networks:
+      - sharm_internal
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/robots.txt"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  proxy:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.proxy
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    expose:
+      - "80"
+    networks:
+      - sharm_internal
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:80/api/v1/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  sharm_internal:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  public_storage:
+  private_storage:
+  backup_storage:

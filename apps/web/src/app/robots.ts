@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export default function robots(): MetadataRoute.Robots {
   const base = (process.env.PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
   const isStaging = process.env.NODE_ENV !== 'production' || process.env.DEMO_MODE === 'true';

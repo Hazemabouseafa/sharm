@@ -8,6 +8,8 @@ import { loadPublicCatalogContext, loadPublicGlobal, loadPublishedPage } from '@
 import { SharedBlockRenderer, PublicTourSummary } from '@/components/cms/SharedBlockRenderer';
 import { FaqAccordion } from '@/components/public/FaqAccordion';
 
+export const dynamic = 'force-dynamic';
+
 interface DestinationDetailResponse {
   destination: {
     id: string;

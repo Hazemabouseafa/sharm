@@ -21,7 +21,7 @@ import {
   StaffAuthGuard,
 } from '../common/auth.guard';
 import { DomainError } from '../common/http-exception.filter';
-import { getAppEnv } from '../common/env';
+import { resolveCookieSecure } from '../common/env';
 
 @ApiTags('Public Booking Engine')
 @Controller('public')
@@ -53,10 +53,11 @@ export class PublicBookingController {
   @Post('booking-access/exchange')
   async exchangeToken(
     @Body() body: { token?: string },
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { sessionCookie, reference } = await this.booking.exchangeManageToken(body?.token ?? '');
-    const secure = getAppEnv().COOKIE_SECURE === 'true';
+    const secure = resolveCookieSecure(req);
     res.cookie(GUEST_COOKIE_NAME, sessionCookie, {
       httpOnly: true,
       secure,
