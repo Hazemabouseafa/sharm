@@ -1,0 +1,145 @@
+name: sharm-pharaoh-staging
+
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-sharm_pharaoh_staging}
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+    networks:
+      - sharm_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-sharm_pharaoh_staging}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.api
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: staging
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+    command: ["sh", "-c", "pnpm db:migrate:deploy && pnpm db:seed:prod-init"]
+    networks:
+      - sharm_internal
+
+  api:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: staging
+      API_PORT: 4000
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:?PUBLIC_SITE_URL is required}
+      PUBLIC_API_URL: ${PUBLIC_API_URL:?PUBLIC_API_URL is required}
+      INTERNAL_WEB_REVALIDATE_URL: http://web:3000/api/internal/revalidate
+      REVALIDATE_SHARED_SECRET: ${REVALIDATE_SHARED_SECRET:?REVALIDATE_SHARED_SECRET is required}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+      CSRF_SECRET: ${CSRF_SECRET:?CSRF_SECRET is required}
+      PREVIEW_TOKEN_SECRET: ${PREVIEW_TOKEN_SECRET:?PREVIEW_TOKEN_SECRET is required}
+      GUEST_TOKEN_PEPPER: ${GUEST_TOKEN_PEPPER:?GUEST_TOKEN_PEPPER is required}
+      STORAGE_PUBLIC_DIR: /app/storage/public
+      STORAGE_PRIVATE_DIR: /app/storage/private
+      PAYMOB_ENABLED: ${PAYMOB_ENABLED:-false}
+    volumes:
+      - public_staging_storage:/app/storage/public
+      - private_staging_storage:/app/storage/private
+      - backup_staging_storage:/app/storage/backups
+    networks:
+      - sharm_internal
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: staging
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      WORKER_CONCURRENCY: 2
+      INTERNAL_WEB_REVALIDATE_URL: http://web:3000/api/internal/revalidate
+      REVALIDATE_SHARED_SECRET: ${REVALIDATE_SHARED_SECRET:?REVALIDATE_SHARED_SECRET is required}
+      STORAGE_PUBLIC_DIR: /app/storage/public
+      STORAGE_PRIVATE_DIR: /app/storage/private
+      BACKUP_ENCRYPTION_PASSPHRASE: ${BACKUP_ENCRYPTION_PASSPHRASE:?BACKUP_ENCRYPTION_PASSPHRASE is required}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_FROM: ${SMTP_FROM:-reservations@staging.sharmpharaoh.com}
+    volumes:
+      - public_staging_storage:/app/storage/public
+      - private_staging_storage:/app/storage/private
+      - backup_staging_storage:/app/storage/backups
+    networks:
+      - sharm_internal
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:?PUBLIC_SITE_URL is required}
+      NEXT_PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:?PUBLIC_SITE_URL is required}
+      NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:?PUBLIC_API_URL is required}
+      INTERNAL_API_URL: http://api:4000/api/v1
+      REVALIDATE_SHARED_SECRET: ${REVALIDATE_SHARED_SECRET:?REVALIDATE_SHARED_SECRET is required}
+    networks:
+      - sharm_internal
+
+  proxy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_staging_data:/data
+      - caddy_staging_config:/config
+    networks:
+      - sharm_internal
+
+networks:
+  sharm_internal:
+    driver: bridge
+
+volumes:
+  postgres_staging_data:
+  public_staging_storage:
+  private_staging_storage:
+  backup_staging_storage:
+  caddy_staging_data:
+  caddy_staging_config:

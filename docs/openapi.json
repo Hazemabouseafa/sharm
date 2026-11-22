@@ -1,0 +1,1751 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/health/live": {
+      "get": {
+        "operationId": "HealthController_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "operationId": "HealthController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/reauth": {
+      "post": {
+        "operationId": "AuthController_reauth",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/password-reset/request": {
+      "post": {
+        "operationId": "AuthController_requestReset",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/password-reset/confirm": {
+      "post": {
+        "operationId": "AuthController_confirmReset",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/2fa/setup": {
+      "post": {
+        "operationId": "AuthController_setup2fa",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/2fa/enable": {
+      "post": {
+        "operationId": "AuthController_enable2fa",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/auth/2fa/disable": {
+      "post": {
+        "operationId": "AuthController_disable2fa",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Auth"
+        ]
+      }
+    },
+    "/api/v1/public/destinations": {
+      "get": {
+        "operationId": "PublicCatalogController_listDestinations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Catalog"
+        ]
+      }
+    },
+    "/api/v1/public/destinations/{slug}": {
+      "get": {
+        "operationId": "PublicCatalogController_getDestination",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Catalog"
+        ]
+      }
+    },
+    "/api/v1/public/categories": {
+      "get": {
+        "operationId": "PublicCatalogController_listCategories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Catalog"
+        ]
+      }
+    },
+    "/api/v1/public/tours": {
+      "get": {
+        "operationId": "PublicCatalogController_listTours",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Catalog"
+        ]
+      }
+    },
+    "/api/v1/public/tours/{slug}": {
+      "get": {
+        "operationId": "PublicCatalogController_getTour",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/tours": {
+      "get": {
+        "operationId": "AdminCatalogController_listTours",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCatalogController_createTour",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/tours/{id}": {
+      "get": {
+        "operationId": "AdminCatalogController_getTour",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminCatalogController_updateTour",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/tours/slug/{slug}/preview": {
+      "get": {
+        "operationId": "AdminCatalogController_previewTour",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/tours/{id}/publish": {
+      "post": {
+        "operationId": "AdminCatalogController_publishTour",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/tours/{id}/archive": {
+      "post": {
+        "operationId": "AdminCatalogController_archiveTour",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/tours/{id}/clone": {
+      "post": {
+        "operationId": "AdminCatalogController_cloneTour",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/destinations": {
+      "get": {
+        "operationId": "AdminCatalogController_listDestinations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCatalogController_createDestination",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/destinations/{id}": {
+      "patch": {
+        "operationId": "AdminCatalogController_updateDestination",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCatalogController_deleteDestination",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy": {
+      "get": {
+        "operationId": "AdminCatalogController_listTaxonomy",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/categories": {
+      "post": {
+        "operationId": "AdminCatalogController_createCategory",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/categories/{id}": {
+      "delete": {
+        "operationId": "AdminCatalogController_deleteCategory",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/addons": {
+      "post": {
+        "operationId": "AdminCatalogController_createAddon",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/addons/{id}": {
+      "patch": {
+        "operationId": "AdminCatalogController_updateAddon",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCatalogController_deleteAddon",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/pickup-zones": {
+      "post": {
+        "operationId": "AdminCatalogController_createPickupZone",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/pickup-zones/{id}": {
+      "delete": {
+        "operationId": "AdminCatalogController_deletePickupZone",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/policies": {
+      "post": {
+        "operationId": "AdminCatalogController_createPolicy",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/taxonomy/policies/{id}/versions": {
+      "post": {
+        "operationId": "AdminCatalogController_publishPolicyVersion",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/availability/departures": {
+      "get": {
+        "operationId": "AvailabilityController_listDepartures",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      }
+    },
+    "/api/v1/admin/availability/schedules": {
+      "get": {
+        "operationId": "AvailabilityController_listSchedules",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      },
+      "post": {
+        "operationId": "AvailabilityController_createSchedule",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      }
+    },
+    "/api/v1/admin/availability/generate": {
+      "post": {
+        "operationId": "AvailabilityController_generate",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      }
+    },
+    "/api/v1/admin/availability/blackouts": {
+      "post": {
+        "operationId": "AvailabilityController_addBlackout",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      }
+    },
+    "/api/v1/admin/availability/blackouts/{id}": {
+      "delete": {
+        "operationId": "AvailabilityController_deleteBlackout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      }
+    },
+    "/api/v1/admin/availability/departures/{id}": {
+      "patch": {
+        "operationId": "AvailabilityController_updateDeparture",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      }
+    },
+    "/api/v1/admin/availability/bulk": {
+      "post": {
+        "operationId": "AvailabilityController_bulkUpdate",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Availability"
+        ]
+      }
+    },
+    "/api/v1/public/quotes": {
+      "post": {
+        "operationId": "PublicBookingController_createQuote",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/public/bookings": {
+      "post": {
+        "operationId": "PublicBookingController_createBooking",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/exchange": {
+      "post": {
+        "operationId": "PublicBookingController_exchangeToken",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/recover": {
+      "post": {
+        "operationId": "PublicBookingController_recoverAccess",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/current": {
+      "get": {
+        "operationId": "PublicBookingController_getCurrentGuestBooking",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/cancel": {
+      "post": {
+        "operationId": "PublicBookingController_cancelGuestBooking",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/reschedule": {
+      "post": {
+        "operationId": "PublicBookingController_rescheduleGuestBooking",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/voucher.pdf": {
+      "get": {
+        "operationId": "PublicBookingController_downloadGuestVoucher",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Booking Engine"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings": {
+      "get": {
+        "operationId": "AdminBookingController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/export.csv": {
+      "get": {
+        "operationId": "AdminBookingController_exportCsv",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}": {
+      "get": {
+        "operationId": "AdminBookingController_detail",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}/voucher.pdf": {
+      "get": {
+        "operationId": "AdminBookingController_staffVoucher",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}/approve": {
+      "post": {
+        "operationId": "AdminBookingController_approve",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}/decline": {
+      "post": {
+        "operationId": "AdminBookingController_decline",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}/reschedule": {
+      "post": {
+        "operationId": "AdminBookingController_reschedule",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}/notes": {
+      "post": {
+        "operationId": "AdminBookingController_addNote",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}/assign": {
+      "post": {
+        "operationId": "AdminBookingController_assign",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/{id}/resend": {
+      "post": {
+        "operationId": "AdminBookingController_resend",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/checkin-qr": {
+      "post": {
+        "operationId": "AdminBookingController_checkinQr",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/admin/bookings/bulk": {
+      "post": {
+        "operationId": "AdminBookingController_bulk",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Bookings"
+        ]
+      }
+    },
+    "/api/v1/public/media/{storageKey}": {
+      "get": {
+        "operationId": "PublicMediaController_servePublic",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Media"
+        ]
+      }
+    },
+    "/api/v1/admin/media": {
+      "get": {
+        "operationId": "AdminMediaController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Media"
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}/references": {
+      "get": {
+        "operationId": "AdminMediaController_references",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Media"
+        ]
+      }
+    },
+    "/api/v1/admin/media/upload": {
+      "post": {
+        "operationId": "AdminMediaController_upload",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Media"
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}": {
+      "patch": {
+        "operationId": "AdminMediaController_update",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Media"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminMediaController_remove",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Media"
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}/private": {
+      "get": {
+        "operationId": "AdminMediaController_servePrivate",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Media"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/payment-proofs": {
+      "post": {
+        "operationId": "PublicPaymentsController_uploadGuestProof",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Payments & Webhooks"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/payment-proofs/{proofId}/file": {
+      "get": {
+        "operationId": "PublicPaymentsController_downloadOwnProof",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Payments & Webhooks"
+        ]
+      }
+    },
+    "/api/v1/public/booking-access/online-checkout": {
+      "post": {
+        "operationId": "PublicPaymentsController_startOnlineCheckout",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Payments & Webhooks"
+        ]
+      }
+    },
+    "/api/v1/webhooks/paymob": {
+      "post": {
+        "operationId": "PublicPaymentsController_paymobWebhook",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Payments & Webhooks"
+        ]
+      }
+    },
+    "/api/v1/admin/payments": {
+      "get": {
+        "operationId": "AdminPaymentsController_dashboard",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Payments & Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/payments/provider-status": {
+      "get": {
+        "operationId": "AdminPaymentsController_providerStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Payments & Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/payments/provider-config": {
+      "patch": {
+        "operationId": "AdminPaymentsController_updateProviderConfig",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Payments & Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/payments/proofs/{id}/review": {
+      "post": {
+        "operationId": "AdminPaymentsController_reviewProof",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Payments & Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/payments/manual": {
+      "post": {
+        "operationId": "AdminPaymentsController_recordManual",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Payments & Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/payments/refunds": {
+      "post": {
+        "operationId": "AdminPaymentsController_refund",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Payments & Refunds"
+        ]
+      }
+    },
+    "/api/v1/public/cms/global": {
+      "get": {
+        "operationId": "PublicCmsController_getGlobal",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public CMS"
+        ]
+      }
+    },
+    "/api/v1/public/cms/page": {
+      "get": {
+        "operationId": "PublicCmsController_getPage",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public CMS"
+        ]
+      }
+    },
+    "/api/v1/public/cms/sitemap": {
+      "get": {
+        "operationId": "PublicCmsController_getSitemap",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public CMS"
+        ]
+      }
+    },
+    "/api/v1/public/cms/preview": {
+      "get": {
+        "operationId": "PublicCmsController_getPreview",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public CMS"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages": {
+      "get": {
+        "operationId": "AdminCmsController_listPages",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCmsController_createPage",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages/{id}": {
+      "get": {
+        "operationId": "AdminCmsController_getPage",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages/{id}/draft": {
+      "put": {
+        "operationId": "AdminCmsController_saveDraft",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages/{id}/preview-link": {
+      "post": {
+        "operationId": "AdminCmsController_createPreviewLink",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages/{id}/publish": {
+      "post": {
+        "operationId": "AdminCmsController_publishPage",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages/{id}/rollback": {
+      "post": {
+        "operationId": "AdminCmsController_rollbackPage",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages/{id}/restore-to-draft": {
+      "post": {
+        "operationId": "AdminCmsController_restoreToDraft",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/pages/{id}/schedule": {
+      "post": {
+        "operationId": "AdminCmsController_schedule",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/schedules/{id}": {
+      "delete": {
+        "operationId": "AdminCmsController_cancelSchedule",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/global": {
+      "get": {
+        "operationId": "AdminCmsController_getGlobal",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/global/draft": {
+      "put": {
+        "operationId": "AdminCmsController_saveGlobalDraft",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/admin/cms/global/publish": {
+      "post": {
+        "operationId": "AdminCmsController_publishGlobal",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CMS & Live Editor"
+        ]
+      }
+    },
+    "/api/v1/public/inquiries": {
+      "post": {
+        "operationId": "PublicInquiriesController_submit",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Public Inquiries"
+        ]
+      }
+    },
+    "/api/v1/admin/inquiries": {
+      "get": {
+        "operationId": "AdminCrmController_listInquiries",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/inquiries/{id}": {
+      "patch": {
+        "operationId": "AdminCrmController_updateInquiry",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/customers": {
+      "get": {
+        "operationId": "AdminCrmController_listCustomers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/customers/{id}": {
+      "get": {
+        "operationId": "AdminCrmController_customerDetail",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/customers/{id}/notes": {
+      "post": {
+        "operationId": "AdminCrmController_addNote",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/customers/{id}/export": {
+      "get": {
+        "operationId": "AdminCrmController_exportCustomer",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/customers/{id}/anonymize": {
+      "post": {
+        "operationId": "AdminCrmController_anonymizeCustomer",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/promotions": {
+      "get": {
+        "operationId": "AdminCrmController_listPromotions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      },
+      "post": {
+        "operationId": "AdminCrmController_createPromotion",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/promotions/{id}": {
+      "patch": {
+        "operationId": "AdminCrmController_updatePromotion",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin CRM & Promotions"
+        ]
+      }
+    },
+    "/api/v1/admin/overview": {
+      "get": {
+        "operationId": "AdminController_overview",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/reports": {
+      "get": {
+        "operationId": "AdminController_reports",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/reports/export.csv": {
+      "get": {
+        "operationId": "AdminController_exportReport",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/team": {
+      "get": {
+        "operationId": "AdminController_listTeam",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      },
+      "post": {
+        "operationId": "AdminController_createStaff",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/team/{id}": {
+      "patch": {
+        "operationId": "AdminController_updateStaff",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/team/{id}/revoke-sessions": {
+      "post": {
+        "operationId": "AdminController_revokeSessions",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/settings": {
+      "get": {
+        "operationId": "AdminController_getSettings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminController_updateSettings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/security": {
+      "patch": {
+        "operationId": "AdminController_updateSecuritySettings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/audit-logs": {
+      "get": {
+        "operationId": "AdminController_auditLogs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/health": {
+      "get": {
+        "operationId": "AdminController_health",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/health/jobs/{id}/retry": {
+      "post": {
+        "operationId": "AdminController_retryJob",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    },
+    "/api/v1/admin/health/expire-now": {
+      "post": {
+        "operationId": "AdminController_expireNow",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin Operations"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Sharm Pharaoh Travel API",
+    "description": "Authoritative booking engine, CMS/Live Editor, RBAC admin, payments, and media API.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "cookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "spt_staff_session"
+      }
+    },
+    "schemas": {}
+  }
+}

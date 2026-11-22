@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1
+FROM node:24-bookworm-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates postgresql-client curl && rm -rf /var/lib/apt/lists/*
+RUN corepack enable && corepack prepare pnpm@10.34.9 --activate
+
+FROM base AS builder
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY packages/contracts/package.json ./packages/contracts/
+COPY packages/database/package.json ./packages/database/
+COPY packages/ui/package.json ./packages/ui/
+COPY apps/api/package.json ./apps/api/
+RUN pnpm install --frozen-lockfile
+
+COPY packages/contracts ./packages/contracts
+COPY packages/database ./packages/database
+COPY apps/api ./apps/api
+COPY scripts ./scripts
+
+RUN pnpm --filter @sharm/contracts build \
+ && pnpm --filter @sharm/database generate \
+ && pnpm --filter @sharm/database build \
+ && pnpm --filter @sharm/api build
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder --chown=node:node /app /app
+RUN mkdir -p /app/storage/public /app/storage/private /app/storage/backups && chown -R node:node /app/storage
+USER node
+EXPOSE 4000
+HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:4000/api/v1/health/ready || exit 1
+CMD ["node", "apps/api/dist/main.js"]

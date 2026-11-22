@@ -1,0 +1,238 @@
+@import "tailwindcss";
+
+:root {
+  --brand-petrol: #103D45;
+  --brand-petrol-dark: #0A292F;
+  --brand-turquoise: #18A5A0;
+  --brand-turquoise-accessible: #0E7C78;
+  --brand-gold: #C9A66B;
+  --brand-gold-accessible: #8A6828;
+  --brand-ivory: #F7F5EF;
+  --brand-border: #E5DFD2;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--brand-ivory);
+  color: var(--brand-petrol);
+  overflow-x: clip;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-name: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: opacity, color, background-color, border-color !important;
+    transition-duration: 120ms !important;
+  }
+}
+
+body {
+  background-color: var(--brand-ivory);
+  color: var(--brand-petrol);
+  font-family: var(--font-manrope), var(--font-inter), system-ui, -apple-system, sans-serif;
+  overflow-x: clip;
+}
+
+/* Impeccable browser surface polish: selection, caret, scrollbars, typography balance, contrast */
+::selection {
+  background-color: #18A5A0;
+  color: #0A292F;
+}
+
+:root {
+  scrollbar-color: #C9A66B #F7F5EF;
+  scrollbar-width: thin;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+p, li {
+  text-wrap: pretty;
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+input,
+textarea,
+select {
+  caret-color: #0E7C78;
+}
+
+::placeholder {
+  color: #52606D;
+  opacity: 1;
+}
+
+[lang="ar"] {
+  font-family: 'Segoe UI', 'Tahoma', 'Arial', system-ui, sans-serif;
+}
+
+/* Accessible high-contrast focus outlines (WCAG 2.4.7 & 1.4.11) */
+:where(a:any-link, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid #18A5A0;
+  outline-offset: 2px;
+}
+
+/* Visually hidden utility keeping skip links & announcements in accessibility tree */
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* Form control ergonomics (modern-web-guidance forms & validate-input-after-interaction) */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select,
+textarea {
+  font: inherit;
+  font-size: max(1rem, 1em);
+}
+
+:is(input, select, textarea):is(:user-invalid, .user-invalid-fallback) {
+  border-color: #B91C1C;
+  background-color: #FEF2F2;
+}
+
+/* Native modal <dialog> scroll containment (modern-web-guidance dialog) */
+dialog.spt-native-dialog:not([open]) {
+  display: none;
+}
+dialog.spt-native-dialog:modal {
+  overscroll-behavior: contain;
+}
+dialog.spt-native-dialog::backdrop {
+  background: rgba(16, 61, 69, 0.56);
+  backdrop-filter: blur(2px);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Native <dialog> Swipe-Dismissible Mobile Drawer (modern-web-guidance navigation-drawer) */
+.spt-drawer {
+  --drawer-width: min(21em, 82dvw, 100dvw - 24px);
+  --drawer-backdrop: 0;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  overflow: visible;
+}
+.spt-drawer:not([open]) {
+  display: none;
+}
+.spt-drawer::backdrop {
+  background: #0A292F;
+  opacity: calc(var(--drawer-backdrop) * 0.65);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+.spt-drawer-scroller {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--drawer-width) 100%;
+  overflow-x: scroll;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+.spt-drawer-scroller::-webkit-scrollbar {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .spt-drawer-scroller {
+    scroll-behavior: smooth;
+  }
+}
+.spt-drawer-scroller::after {
+  content: '';
+  scroll-snap-align: end;
+  scroll-initial-target: nearest;
+}
+.spt-drawer-sheet {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100svh;
+  background: #103D45;
+  color: #FFFFFF;
+  overflow-y: auto;
+  scroll-snap-align: start;
+  scrollbar-width: none;
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28);
+}
+
+@supports (animation-timeline: scroll()) {
+  @property --drawer-backdrop {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+  .spt-drawer {
+    timeline-scope: --spt-drawer-fade;
+    animation: spt-fade-drawer-backdrop linear both;
+    animation-timeline: --spt-drawer-fade;
+  }
+  .spt-drawer-scroller {
+    scroll-timeline: --spt-drawer-fade x;
+  }
+  @keyframes spt-fade-drawer-backdrop {
+    0% { --drawer-backdrop: 1; }
+    100% { --drawer-backdrop: 0; }
+  }
+}
+
+/* Editorial rich-text prose styling */
+.spt-prose h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #103D45;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.spt-prose h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #103D45;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.spt-prose p {
+  line-height: 1.75;
+  margin-bottom: 1rem;
+  color: #334155;
+}
+.spt-prose ul, .spt-prose ol {
+  padding-inline-start: 1.5rem;
+  margin-bottom: 1rem;
+  color: #334155;
+}
+.spt-prose ul {
+  list-style-type: disc;
+}
+.spt-prose ol {
+  list-style-type: decimal;
+}
+.spt-prose a {
+  color: #0E7C78;
+  text-decoration: underline;
+  font-weight: 600;
+}

@@ -1,0 +1,1073 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StaffRole {
+  OWNER
+  MANAGER
+  RESERVATIONS_AGENT
+  CONTENT_EDITOR
+  FINANCE
+  READ_ONLY
+}
+
+enum TourStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PricingMode {
+  PER_PERSON
+  PRIVATE_GROUP
+}
+
+enum AddonPricingBasis {
+  PER_PERSON
+  PER_BOOKING
+}
+
+enum DepartureStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
+enum BookingStatus {
+  REQUESTED
+  HELD
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+  COMPLETED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PARTIALLY_PAID
+  PAID
+  PARTIALLY_REFUNDED
+  REFUNDED
+  FAILED
+}
+
+enum PaymentChoice {
+  PAY_LATER
+  BANK_TRANSFER
+  ONLINE_FULL
+  ONLINE_DEPOSIT
+}
+
+enum PaymentProvider {
+  PAY_LATER
+  BANK_TRANSFER
+  PAYMOB
+}
+
+enum PaymentAttemptStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentProofStatus {
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
+}
+
+enum LedgerEntryType {
+  CAPTURE
+  MANUAL_PAYMENT
+  REFUND
+  OVERPAYMENT_EXCEPTION
+}
+
+enum RefundStatus {
+  PENDING
+  APPROVED
+  PROCESSED
+  FAILED
+  REJECTED
+}
+
+enum DiscountType {
+  FIXED
+  PERCENT
+}
+
+enum RedemptionStatus {
+  RESERVED
+  FINALIZED
+  RELEASED
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  REPLIED
+  ARCHIVED
+}
+
+enum MediaVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum CmsPageKind {
+  HOME
+  TOURS
+  DESTINATION
+  CONTACT
+  LEGAL
+  CUSTOM
+}
+
+enum CmsRevisionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PublishScheduleStatus {
+  PENDING
+  PUBLISHED
+  CANCELLED
+  FAILED
+}
+
+enum OutboxJobStatus {
+  PENDING
+  LEASED
+  COMPLETED
+  FAILED
+  DEAD
+}
+
+enum EmailDeliveryStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+model StaffUser {
+  id                  String               @id @default(cuid())
+  email               String               @unique
+  username            String?              @unique
+  fullName            String
+  passwordHash        String
+  role                StaffRole
+  isActive            Boolean              @default(true)
+  suspendedAt         DateTime?
+  totpSecretEncrypted String?
+  totpEnabledAt       DateTime?
+  lastLoginAt         DateTime?
+  version             Int                  @default(1)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  sessions            StaffSession[]
+  passwordResets      PasswordResetToken[]
+  recoveryCodes       StaffRecoveryCode[]
+  assignedBookings    Booking[]            @relation("AssignedBookings")
+  bookingNotes        BookingNote[]
+  customerNotes       CustomerNote[]
+  assignedInquiries   Inquiry[]            @relation("AssignedInquiries")
+  auditLogs           AuditLog[]
+  reviewedProofs      PaymentProof[]       @relation("ReviewedProofs")
+  recordedLedger      PaymentLedgerEntry[] @relation("RecordedLedger")
+  uploadedMedia       MediaAsset[]         @relation("UploadedMedia")
+  createdRevisions    CmsRevision[]        @relation("CreatedRevisions")
+  publishedRevisions  CmsRevision[]        @relation("PublishedRevisions")
+}
+
+model StaffSession {
+  id               String    @id @default(cuid())
+  userId           String
+  tokenHash        String    @unique
+  csrfTokenHash    String
+  ipAddress        String?
+  userAgent        String?
+  lastActivityAt   DateTime  @default(now())
+  lastReauthAt     DateTime  @default(now())
+  idleExpiresAt    DateTime
+  absoluteExpiresAt DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+
+  user StaffUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([absoluteExpiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user StaffUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model StaffRecoveryCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user StaffUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt])
+}
+
+model MediaAsset {
+  id               String          @id @default(cuid())
+  storageKey       String          @unique
+  visibility       MediaVisibility @default(PUBLIC)
+  originalFilename String
+  mimeType         String
+  sizeBytes        Int
+  width            Int?
+  height           Int?
+  altText          String          @default("")
+  folder           String          @default("general")
+  tagsJson         Json            @default("[]")
+  focalX           Int             @default(50)
+  focalY           Int             @default(50)
+  cropJson         Json?
+  variantsJson     Json            @default("{}")
+  uploadedById     String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  uploadedBy    StaffUser?     @relation("UploadedMedia", fields: [uploadedById], references: [id], onDelete: SetNull)
+  destinations  Destination[]
+  toursPrimary  Tour[]         @relation("TourPrimaryMedia")
+  paymentProofs PaymentProof[]
+
+  @@index([visibility, folder])
+}
+
+model Destination {
+  id             String     @id @default(cuid())
+  slug           String     @unique
+  name           String
+  tagline        String
+  heroSubtitle   String
+  description    String
+  heroMediaId    String?
+  heroImageUrl   String
+  heroImageAlt   String
+  highlightsJson Json       @default("[]")
+  faqJson        Json       @default("[]")
+  displayOrder   Int        @default(0)
+  isVisible      Boolean    @default(true)
+  seoTitle       String?
+  seoDescription String?
+  version        Int        @default(1)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  heroMedia   MediaAsset?  @relation(fields: [heroMediaId], references: [id], onDelete: SetNull)
+  tours       Tour[]
+  pickupZones PickupZone[]
+  cmsPages    CmsPage[]
+
+  @@index([isVisible, displayOrder])
+}
+
+model Category {
+  id           String         @id @default(cuid())
+  slug         String         @unique
+  name         String
+  icon         String         @default("compass")
+  description  String         @default("")
+  displayOrder Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  tours TourCategory[]
+}
+
+model PolicyDocument {
+  id                     String          @id @default(cuid())
+  code                   String          @unique
+  name                   String
+  summary                String
+  freeCancellationHours  Int             @default(24)
+  partialRefundHours     Int             @default(12)
+  partialRefundPercentBps Int            @default(5000)
+  isActive               Boolean         @default(true)
+  version                Int             @default(1)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  versions PolicyVersion[]
+  tours    Tour[]
+}
+
+model PolicyVersion {
+  id                     String         @id @default(cuid())
+  policyId               String
+  versionNumber          Int
+  title                  String
+  bodyMarkdown           String
+  freeCancellationHours  Int
+  partialRefundHours     Int
+  partialRefundPercentBps Int
+  publishedAt            DateTime       @default(now())
+
+  policy   PolicyDocument @relation(fields: [policyId], references: [id], onDelete: Restrict)
+  bookings Booking[]
+
+  @@unique([policyId, versionNumber])
+}
+
+model Addon {
+  id                String            @id @default(cuid())
+  code              String            @unique
+  title             String
+  description       String            @default("")
+  pricingBasis      AddonPricingBasis @default(PER_BOOKING)
+  priceMinor        Int
+  currency          String            @default("USD")
+  maxQuantity       Int               @default(1)
+  eligibleBandsJson Json              @default("[\"ADULT\",\"CHILD\"]")
+  isActive          Boolean           @default(true)
+  version           Int               @default(1)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  tours TourAddon[]
+}
+
+model PickupZone {
+  id                         String            @id @default(cuid())
+  destinationId              String
+  name                       String
+  surchargeMinor             Int               @default(0)
+  pricingBasis               AddonPricingBasis @default(PER_BOOKING)
+  currency                   String            @default("USD")
+  requiresHotelDetails       Boolean           @default(true)
+  defaultPickupOffsetMinutes Int               @default(30)
+  isActive                   Boolean           @default(true)
+  createdAt                  DateTime          @default(now())
+  updatedAt                  DateTime          @updatedAt
+
+  destination Destination      @relation(fields: [destinationId], references: [id], onDelete: Restrict)
+  tours       TourPickupZone[]
+
+  @@unique([destinationId, name])
+}
+
+model Tour {
+  id                     String      @id @default(cuid())
+  slug                   String      @unique
+  status                 TourStatus  @default(DRAFT)
+  title                  String
+  destinationId          String
+  shortDescription       String
+  descriptionHtml        String
+  highlightsJson         Json        @default("[]")
+  durationLabel          String
+  durationHours          Int         @default(8)
+  guideLanguagesJson     Json        @default("[\"English\"]")
+  meetingPoint           String      @default("")
+  minAge                 Int         @default(0)
+  accessibilityInfo      String      @default("")
+  itineraryJson          Json        @default("[]")
+  inclusionsJson         Json        @default("[]")
+  exclusionsJson         Json        @default("[]")
+  whatToBringJson        Json        @default("[]")
+  faqJson                Json        @default("[]")
+  pricingMode            PricingMode @default(PER_PERSON)
+  currency               String      @default("USD")
+  pricingVersion         Int         @default(1)
+  privateGroupPriceMinor Int?
+  minAdults              Int         @default(1)
+  minPartySize           Int         @default(1)
+  maxPartySize           Int         @default(16)
+  ageBandsJson           Json        @default("[]")
+  taxIncluded            Boolean     @default(true)
+  taxRateBps             Int         @default(0)
+  serviceFeeIncluded     Boolean     @default(true)
+  serviceFeeBps          Int         @default(0)
+  depositEnabled         Boolean     @default(false)
+  depositPercentBps      Int         @default(0)
+  instantConfirmPayLater Boolean     @default(false)
+  defaultCapacity        Int         @default(16)
+  defaultCutoffHours     Int         @default(12)
+  policyId               String?
+  featured               Boolean     @default(false)
+  displayOrder           Int         @default(0)
+  primaryMediaId         String?
+  primaryImageUrl        String
+  primaryImageAlt        String
+  galleryJson            Json        @default("[]")
+  relatedTourIdsJson     Json        @default("[]")
+  seoTitle               String?
+  seoDescription         String?
+  version                Int         @default(1)
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+
+  destination        Destination         @relation(fields: [destinationId], references: [id], onDelete: Restrict)
+  policy             PolicyDocument?     @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  primaryMedia       MediaAsset?         @relation("TourPrimaryMedia", fields: [primaryMediaId], references: [id], onDelete: SetNull)
+  categories         TourCategory[]
+  addons             TourAddon[]
+  pickupZones        TourPickupZone[]
+  recurringSchedules RecurringSchedule[]
+  blackoutDates      BlackoutDate[]
+  departures         Departure[]
+  quotes             BookingQuote[]
+  bookings           Booking[]
+
+  @@index([status, featured, displayOrder])
+  @@index([destinationId, status])
+}
+
+model TourCategory {
+  tourId     String
+  categoryId String
+
+  tour     Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@id([tourId, categoryId])
+}
+
+model TourAddon {
+  tourId  String
+  addonId String
+
+  tour  Tour  @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  addon Addon @relation(fields: [addonId], references: [id], onDelete: Restrict)
+
+  @@id([tourId, addonId])
+}
+
+model TourPickupZone {
+  tourId       String
+  pickupZoneId String
+
+  tour       Tour       @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  pickupZone PickupZone @relation(fields: [pickupZoneId], references: [id], onDelete: Restrict)
+
+  @@id([tourId, pickupZoneId])
+}
+
+model RecurringSchedule {
+  id                           String   @id @default(cuid())
+  tourId                       String
+  weekdaysJson                 Json     // array of ISO weekdays 1..7
+  startTime                    String   // HH:MM in Africa/Cairo
+  capacity                     Int
+  cutoffHours                  Int      @default(12)
+  adultPriceOverrideMinor      Int?
+  childPriceOverrideMinor      Int?
+  privateGroupPriceOverrideMinor Int?
+  activeFromDate               String   // YYYY-MM-DD
+  activeToDate                 String?  // YYYY-MM-DD
+  isActive                     Boolean  @default(true)
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
+
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  @@index([tourId, isActive])
+}
+
+model BlackoutDate {
+  id        String   @id @default(cuid())
+  tourId    String?
+  date      String   // YYYY-MM-DD in Africa/Cairo
+  reason    String   @default("")
+  createdAt DateTime @default(now())
+
+  tour Tour? @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  @@unique([tourId, date])
+  @@index([date])
+}
+
+model Departure {
+  id                             String          @id @default(cuid())
+  tourId                         String
+  departureDate                  String          // YYYY-MM-DD in Africa/Cairo
+  startTime                      String          // HH:MM in Africa/Cairo
+  startUtc                       DateTime
+  timezone                       String          @default("Africa/Cairo")
+  capacity                       Int
+  bookedSeats                    Int             @default(0)
+  heldSeats                      Int             @default(0)
+  status                         DepartureStatus @default(OPEN)
+  cutoffHours                    Int             @default(12)
+  adultPriceOverrideMinor        Int?
+  childPriceOverrideMinor        Int?
+  infantPriceOverrideMinor       Int?
+  privateGroupPriceOverrideMinor Int?
+  pickupTimeNote                 String?
+  version                        Int             @default(1)
+  createdAt                      DateTime        @default(now())
+  updatedAt                      DateTime        @updatedAt
+
+  tour     Tour           @relation(fields: [tourId], references: [id], onDelete: Restrict)
+  quotes   BookingQuote[]
+  bookings Booking[]
+
+  @@unique([tourId, departureDate, startTime])
+  @@index([departureDate, status])
+  @@index([tourId, departureDate, status])
+}
+
+model Customer {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  fullName     String
+  phone        String    @default("")
+  nationality  String?
+  anonymizedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  bookings Booking[]
+  notes    CustomerNote[]
+}
+
+model CustomerNote {
+  id         String    @id @default(cuid())
+  customerId String
+  authorId   String?
+  body       String
+  createdAt  DateTime  @default(now())
+
+  customer Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  author   StaffUser? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+}
+
+model Promotion {
+  id                 String       @id @default(cuid())
+  code               String       @unique
+  title              String
+  discountType       DiscountType
+  value              Int          // minor units for FIXED, bps for PERCENT
+  currency           String       @default("USD")
+  minOrderMinor      Int          @default(0)
+  validFrom          DateTime
+  validUntil         DateTime
+  maxTotalUses       Int?
+  usedCount          Int          @default(0)
+  maxUsesPerEmail    Int?
+  eligibleTourIdsJson Json        @default("[]")
+  isActive           Boolean      @default(true)
+  version            Int          @default(1)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  quotes      BookingQuote[]
+  bookings    Booking[]
+  redemptions PromotionRedemption[]
+
+  @@index([code, isActive])
+}
+
+model BookingQuote {
+  id                 String        @id @default(cuid())
+  tourId             String
+  departureId        String
+  currency           String
+  pricingVersion     Int
+  pricingMode        PricingMode
+  seatsRequired      Int
+  travelersJson      Json
+  selectedAddonsJson Json
+  pickupZoneId       String?
+  promotionId        String?
+  paymentChoice      PaymentChoice
+  baseSubtotalMinor  Int
+  addonsSubtotalMinor Int
+  pickupSubtotalMinor Int
+  discountMinor      Int
+  serviceFeeMinor    Int
+  taxMinor           Int
+  grandTotalMinor    Int
+  dueNowMinor        Int
+  dueLaterMinor      Int
+  lineItemsJson      Json
+  expiresAt          DateTime
+  consumedAt         DateTime?
+  createdAt          DateTime      @default(now())
+
+  tour      Tour       @relation(fields: [tourId], references: [id], onDelete: Restrict)
+  departure Departure  @relation(fields: [departureId], references: [id], onDelete: Restrict)
+  promotion Promotion? @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+
+  @@index([expiresAt])
+}
+
+model Booking {
+  id                   String        @id @default(cuid())
+  reference            String        @unique
+  status               BookingStatus
+  paymentStatus        PaymentStatus
+  tourId               String
+  departureId          String
+  customerId           String
+  assignedStaffId      String?
+  seatsAllocated       Int
+  allocationActive     Boolean       @default(true)
+  holdExpiresAt        DateTime?
+  decisionDeadlineAt   DateTime?
+  currency             String
+  pricingVersion       Int
+  baseSubtotalMinor    Int
+  addonsSubtotalMinor  Int
+  pickupSubtotalMinor  Int
+  discountMinor        Int
+  serviceFeeMinor      Int
+  taxMinor             Int
+  grandTotalMinor      Int
+  dueNowMinor          Int
+  dueLaterMinor        Int
+  paymentChoice        PaymentChoice
+  leadName             String
+  leadEmail            String
+  leadPhone            String
+  nationality          String?
+  hotelName            String?
+  meetingNotes         String?
+  specialRequests      String?
+  travelersJson        Json
+  snapshotJson         Json          // Immutable snapshot of tour/departure/lineItems/policy
+  policyVersionId      String
+  acceptedPolicyAt     DateTime
+  promotionId          String?
+  cancellationReason   String?
+  cancelledAt          DateTime?
+  qrCheckinTokenHash   String        @unique
+  checkedInAt          DateTime?
+  paidUnfulfilledFlag  Boolean       @default(false)
+  version              Int           @default(1)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  tour             Tour                 @relation(fields: [tourId], references: [id], onDelete: Restrict)
+  departure        Departure            @relation(fields: [departureId], references: [id], onDelete: Restrict)
+  customer         Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  assignedStaff    StaffUser?           @relation("AssignedBookings", fields: [assignedStaffId], references: [id], onDelete: SetNull)
+  policyVersion    PolicyVersion        @relation(fields: [policyVersionId], references: [id], onDelete: Restrict)
+  promotion        Promotion?           @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+  notes            BookingNote[]
+  events           BookingEvent[]
+  accessTokens     GuestAccessToken[]
+  redemption       PromotionRedemption?
+  paymentAttempts  PaymentAttempt[]
+  paymentProofs    PaymentProof[]
+  ledgerEntries    PaymentLedgerEntry[]
+  refundRequests   RefundRequest[]
+  emailDeliveries  EmailDelivery[]
+
+  @@index([status, createdAt])
+  @@index([customerId, createdAt])
+  @@index([departureId, status])
+  @@index([allocationActive, holdExpiresAt])
+  @@index([allocationActive, decisionDeadlineAt])
+}
+
+model BookingNote {
+  id        String   @id @default(cuid())
+  bookingId String
+  authorId  String?
+  body      String
+  createdAt DateTime @default(now())
+
+  booking Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  author  StaffUser? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([bookingId])
+}
+
+model BookingEvent {
+  id           String   @id @default(cuid())
+  bookingId    String
+  actorType    String   // GUEST | STAFF | SYSTEM | WEBHOOK
+  actorId      String?
+  eventType    String
+  message      String
+  metadataJson Json     @default("{}")
+  createdAt    DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, createdAt])
+}
+
+model IdempotencyRecord {
+  id           String   @id @default(cuid())
+  scope        String
+  key          String
+  requestHash  String
+  statusCode   Int
+  responseJson Json
+  bookingId    String?
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+
+  @@unique([scope, key])
+  @@index([expiresAt])
+}
+
+model GuestAccessToken {
+  id         String    @id @default(cuid())
+  bookingId  String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, revokedAt])
+}
+
+model PromotionRedemption {
+  id            String           @id @default(cuid())
+  promotionId   String
+  bookingId     String           @unique
+  customerEmail String
+  status        RedemptionStatus @default(RESERVED)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+  booking   Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([promotionId, customerEmail, status])
+}
+
+model PaymentAttempt {
+  id                  String               @id @default(cuid())
+  bookingId           String
+  provider            PaymentProvider
+  externalOrderId     String?              @unique
+  externalIntentionId String?
+  amountMinor         Int
+  currency            String
+  status              PaymentAttemptStatus @default(PENDING)
+  checkoutUrl         String?
+  metadataJson        Json                 @default("{}")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  booking       Booking              @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  ledgerEntries PaymentLedgerEntry[]
+
+  @@index([bookingId, status])
+}
+
+model PaymentProof {
+  id                   String             @id @default(cuid())
+  bookingId            String
+  mediaAssetId         String
+  submittedAmountMinor Int
+  submittedCurrency    String
+  transferReference    String
+  note                 String?
+  status               PaymentProofStatus @default(PENDING_REVIEW)
+  reviewedById         String?
+  reviewedAt           DateTime?
+  reviewNote           String?
+  createdAt            DateTime           @default(now())
+
+  booking    Booking    @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  mediaAsset MediaAsset @relation(fields: [mediaAssetId], references: [id], onDelete: Restrict)
+  reviewedBy StaffUser? @relation("ReviewedProofs", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([bookingId, status])
+}
+
+model PaymentLedgerEntry {
+  id           String          @id @default(cuid())
+  bookingId    String
+  attemptId    String?
+  type         LedgerEntryType
+  provider     PaymentProvider
+  amountMinor  Int             // positive integer minor units
+  currency     String
+  externalRef  String?
+  reason       String          @default("")
+  recordedById String?
+  createdAt    DateTime        @default(now())
+
+  booking    Booking         @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  attempt    PaymentAttempt? @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+  recordedBy StaffUser?      @relation("RecordedLedger", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([bookingId, createdAt])
+  @@index([currency, type, createdAt])
+}
+
+model PaymentWebhookEvent {
+  id               String    @id @default(cuid())
+  provider         String
+  providerEventId  String
+  signatureValid   Boolean
+  payloadJson      Json
+  processingStatus String    @default("RECEIVED") // RECEIVED | PROCESSED | IGNORED | FAILED
+  errorMessage     String?
+  processedAt      DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@unique([provider, providerEventId])
+  @@index([createdAt])
+}
+
+model RefundRequest {
+  id                String       @id @default(cuid())
+  bookingId         String
+  amountMinor       Int
+  currency          String
+  reason            String
+  status            RefundStatus @default(PENDING)
+  requestedByType   String       // GUEST | STAFF | SYSTEM
+  requestedById     String?
+  processedById     String?
+  externalRefundRef String?
+  processedAt       DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+
+  @@index([bookingId, status])
+}
+
+model Inquiry {
+  id              String        @id @default(cuid())
+  fullName        String
+  email           String
+  phone           String?
+  destinationSlug String?
+  message         String
+  status          InquiryStatus @default(NEW)
+  assignedStaffId String?
+  internalNotes   String        @default("")
+  sourceIpHash    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  assignedStaff StaffUser? @relation("AssignedInquiries", fields: [assignedStaffId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+model CmsPage {
+  id                  String      @id @default(cuid())
+  slug                String      @unique
+  kind                CmsPageKind
+  title               String
+  destinationId       String?
+  publishedRevisionId String?     @unique
+  currentDraftId      String?     @unique
+  isSystemProtected   Boolean     @default(false)
+  version             Int         @default(1)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  destination       Destination?         @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  revisions         CmsRevision[]        @relation("PageRevisions")
+  publishedRevision CmsRevision?         @relation("PublishedPageRevision", fields: [publishedRevisionId], references: [id], onDelete: SetNull)
+  currentDraft      CmsRevision?         @relation("CurrentDraftRevision", fields: [currentDraftId], references: [id], onDelete: SetNull)
+  publishSchedules  CmsPublishSchedule[]
+
+  @@index([kind])
+}
+
+model CmsRevision {
+  id             String            @id @default(cuid())
+  pageId         String
+  revisionNumber Int
+  status         CmsRevisionStatus @default(DRAFT)
+  contentJson    Json
+  schemaVersion  Int               @default(1)
+  notes          String            @default("")
+  createdById    String?
+  publishedById  String?
+  publishedAt    DateTime?
+  version        Int               @default(1)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  page            CmsPage              @relation("PageRevisions", fields: [pageId], references: [id], onDelete: Cascade)
+  publishedOnPage CmsPage?             @relation("PublishedPageRevision")
+  draftOnPage     CmsPage?             @relation("CurrentDraftRevision")
+  createdBy       StaffUser?           @relation("CreatedRevisions", fields: [createdById], references: [id], onDelete: SetNull)
+  publishedBy     StaffUser?           @relation("PublishedRevisions", fields: [publishedById], references: [id], onDelete: SetNull)
+  schedules       CmsPublishSchedule[]
+
+  @@unique([pageId, revisionNumber])
+  @@index([pageId, status])
+}
+
+model CmsPublishSchedule {
+  id              String                @id @default(cuid())
+  pageId          String
+  revisionId      String
+  scheduledForUtc DateTime
+  timezone        String                @default("Africa/Cairo")
+  status          PublishScheduleStatus @default(PENDING)
+  createdById     String?
+  executedAt      DateTime?
+  errorMessage    String?
+  createdAt       DateTime              @default(now())
+
+  page     CmsPage     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  revision CmsRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@index([status, scheduledForUtc])
+}
+
+model CmsGlobalContent {
+  id                      String   @id @default(cuid())
+  key                     String   @unique
+  draftJson               Json
+  publishedJson           Json
+  publishedRevisionNumber Int      @default(1)
+  version                 Int      @default(1)
+  updatedById             String?
+  updatedAt               DateTime @updatedAt
+}
+
+model SlugRedirect {
+  id         String   @id @default(cuid())
+  fromPath   String   @unique
+  toPath     String
+  statusCode Int      @default(301)
+  createdAt  DateTime @default(now())
+}
+
+model SiteSetting {
+  id                         String   @id @default(cuid())
+  key                        String   @unique @default("singleton")
+  companyName                String   @default("Sharm Pharaoh Travel")
+  legalName                  String   @default("")
+  baseCurrency               String   @default("USD")
+  timezone                   String   @default("Africa/Cairo")
+  contactEmail               String   @default("")
+  contactPhone               String   @default("")
+  whatsappNumber             String   @default("")
+  addressText                String   @default("")
+  mapEmbedUrl                String   @default("")
+  socialsJson                Json     @default("{}")
+  payLaterEnabled            Boolean  @default(true)
+  bankTransferEnabled        Boolean  @default(false)
+  bankDetailsJson            Json     @default("{}")
+  manualRequestHoldHours     Int      @default(24)
+  onlineCheckoutHoldMinutes  Int      @default(15)
+  defaultTaxIncluded         Boolean  @default(true)
+  defaultTaxRateBps          Int      @default(0)
+  maintenanceBannerEnabled   Boolean  @default(false)
+  maintenanceBannerText      String   @default("")
+  retentionConfigJson        Json     @default("{\"inquiriesDays\":365,\"guestTokensDays\":30,\"travelerPiiDays\":730,\"financialRecordsYears\":7,\"auditLogYears\":5}")
+  emailTemplatesJson         Json     @default("{}")
+  seoDefaultsJson            Json     @default("{}")
+  encryptedPaymobSecretsJson String?
+  paymobNonSecretConfigJson  Json     @default("{\"enabled\":false,\"sandboxVerified\":false,\"currency\":\"USD\",\"integrationId\":\"\",\"callbackUrl\":\"\"}")
+  version                    Int      @default(1)
+  updatedAt                  DateTime @updatedAt
+}
+
+model AuditLog {
+  id                 String    @id @default(cuid())
+  actorId            String?
+  actorRole          String?
+  action             String
+  targetType         String
+  targetId           String?
+  requestId          String?
+  reason             String?
+  beforeRedactedJson Json?
+  afterRedactedJson  Json?
+  ipAddress          String?
+  createdAt          DateTime  @default(now())
+
+  actor StaffUser? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([action, createdAt])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+}
+
+model OutboxJob {
+  id             String          @id @default(cuid())
+  jobType        String
+  dedupeKey      String?         @unique
+  payloadJson    Json
+  status         OutboxJobStatus @default(PENDING)
+  attempts       Int             @default(0)
+  maxAttempts    Int             @default(5)
+  runAfterUtc    DateTime        @default(now())
+  leasedUntilUtc DateTime?
+  leasedBy       String?
+  lastError      String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  emailDeliveries EmailDelivery[]
+
+  @@index([status, runAfterUtc])
+  @@index([status, leasedUntilUtc])
+}
+
+model EmailDelivery {
+  id                String              @id @default(cuid())
+  jobId             String?
+  toEmail           String
+  templateKey       String
+  subject           String
+  status            EmailDeliveryStatus @default(QUEUED)
+  providerMessageId String?
+  bookingId         String?
+  errorMessage      String?
+  sentAt            DateTime?
+  createdAt         DateTime            @default(now())
+
+  job     OutboxJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  booking Booking?   @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+
+  @@index([bookingId])
+  @@index([status, createdAt])
+}
+
+model TranslationCache {
+  id             String   @id @default(cuid())
+  sourceHash     String
+  sourceLang     String
+  targetLang     String
+  sourceText     String
+  translatedText String
+  provider       String   @default("mymemory")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([sourceHash, targetLang])
+  @@index([targetLang, createdAt])
+}

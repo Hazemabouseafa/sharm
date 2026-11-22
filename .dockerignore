@@ -1,0 +1,16 @@
+node_modules
+.git
+.next
+dist
+.env
+.env.*
+!.env.example
+.local-pgdata
+.local-pg.log
+.local-storage
+.local-backups
+playwright-report
+test-results
+Sharm_Pharaoh_Handoff
+docs/qa
+*.log
